@@ -1,0 +1,35 @@
+name: dbs
+
+services:
+  mysql:
+    image: mysql:8.0.29-debian
+    command: --default-authentication-plugin=mysql_native_password
+    cap_add:
+      # https://stackoverflow.com/questions/55559386/how-to-fix-mbind-operation-not-permitted-in-mysql-error-log
+      - SYS_NICE
+    volumes:
+      - ./config:/etc/mysql/conf.d
+      - ${ROOT_DIR}/lib:/var/lib/mysql
+      - ${ROOT_DIR}/log:/var/log/mysql
+    expose:
+      - 3306
+    ports:
+      - "3306:3306"
+    # hostname enable for retrocompatible with older python services
+    hostname: ${HOSTNAME}
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysql" ,"--login-path=ping" , "-e", "'select 1'"]
+      timeout: 10s
+      retries: 10
+    environment:
+      # CHANGE PASSWORD AFTER INSTALLATION
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ROOT_HOST=%
+    labels:
+      - "var.v00=${ROOT_DIR:?ROOT_DIR not set}"
+      - "var.v01=${HOSTNAME:?HOSTNAME not set}"
+networks:
+  default:
+    name: dbs
+    external: true
