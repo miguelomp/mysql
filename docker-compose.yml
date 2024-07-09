@@ -9,8 +9,8 @@ services:
       - SYS_NICE
     volumes:
       - ./config:/etc/mysql/conf.d
-      - ${ROOT_DIR}/lib:/var/lib/mysql
-      - ${ROOT_DIR}/log:/var/log/mysql
+      - ${ROOT_DIR}/mysql/lib:/var/lib/mysql
+      - ${ROOT_DIR}/mysql/log:/var/log/mysql
     expose:
       - 3306
     ports:
